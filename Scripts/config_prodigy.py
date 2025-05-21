@@ -519,8 +519,8 @@ class ConfigProdigy:
                     boot_args.append("-cdfon")
 
                 if  "Intel" in hardware_report.get("CPU").get("Manufacturer") and \
-                    "Integrated GPU" in list(hardware_report.get("GPU").items())[-1][-1].get("Device Type"):
-                    intergrated_gpu = list(hardware_report.get("GPU").items())[-1]
+                    "Integrated GPU" in list(hardware_report.get("GPU").items())[-1] if hardware_report.get("GPU") else ("", {})[-1].get("Device Type"):
+                    intergrated_gpu = list(hardware_report.get("GPU").items())[-1] if hardware_report.get("GPU") else ("", {})
                     if intergrated_gpu[-1].get("OCLP Compatibility"):
                         boot_args.append("ipc_control_port_options=0")
 
@@ -536,7 +536,7 @@ class ConfigProdigy:
                         if intergrated_gpu[-1].get("Device ID")[5:].startswith(("59", "8C", "3E", "87", "9B")) and not intergrated_gpu[-1].get("Device ID").endswith("5917"):
                             boot_args.append("-igfxbl{}".format("t" if self.utils.parse_darwin_version(macos_version) >= self.utils.parse_darwin_version("22.5.0") else "r"))
 
-                discrete_gpu = list(hardware_report.get("GPU").items())[0][-1]
+                discrete_gpu = list(hardware_report.get("GPU").items())[0][-1] if hardware_report.get("GPU") else {}
                 if discrete_gpu.get("Device Type") == "Discrete GPU":
                     if "Navi" in discrete_gpu.get("Codename"):
                         boot_args.append("agdpmod=pikera")
@@ -637,7 +637,7 @@ class ConfigProdigy:
             hardware_report.get("CPU").get("Manufacturer"),
             hardware_report.get("CPU").get("Codename"), 
             hardware_report.get("CPU").get("Core Count"), 
-            list(hardware_report.get("GPU").items())[0][-1].get("Manufacturer"),
+            list(hardware_report.get("GPU").items())[0][-1] if hardware_report.get("GPU") else {}.get("Manufacturer") if hardware_report.get("GPU") else "Unknown",
             hardware_report.get("Network", {}),
             kexts
         )
@@ -707,8 +707,8 @@ class ConfigProdigy:
                     revpatch.append("cpuname")
                 config["PlatformInfo"]["Generic"]["ProcessorType"] = 1537 if int(hardware_report.get("CPU").get("Core Count")) < 8 else 3841
             if  "Intel" in hardware_report.get("CPU").get("Manufacturer") and \
-                "Integrated GPU" in list(hardware_report.get("GPU").items())[-1][-1].get("Device Type"):
-                intergrated_gpu = list(hardware_report.get("GPU").items())[-1][-1]
+                "Integrated GPU" in list(hardware_report.get("GPU").items())[-1] if hardware_report.get("GPU") else ("", {})[-1].get("Device Type"):
+                intergrated_gpu = list(hardware_report.get("GPU").items())[-1] if hardware_report.get("GPU") else ("", {})[-1]
                 if intergrated_gpu.get("OCLP Compatibility"):
                     config["NVRAM"]["Add"]["4D1FDA02-38C7-4A6A-9CC6-4BCCA8B30102"]["OCLP-Settings"] = "-allow_amfi"
                     if self.utils.parse_darwin_version(macos_version) >= self.utils.parse_darwin_version("20.4.0"):

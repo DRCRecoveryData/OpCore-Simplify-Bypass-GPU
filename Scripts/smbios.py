@@ -89,7 +89,9 @@ class SMBIOS:
         elif ("Sandy Bridge" in codename or "Ivy Bridge" in codename) and self.utils.parse_darwin_version(macos_version) < self.utils.parse_darwin_version("22.0.0"):
             smbios_model = "MacPro6,1"
 
-        if platform != "Laptop" and list(hardware_report.get("GPU").items())[-1][-1].get("Device Type") != "Integrated GPU":
+        gpu_data = hardware_report.get("GPU") or {}
+        gpu_list = list(gpu_data.items())
+        if platform != "Laptop" and gpu_list and gpu_list[-1][1].get("Device Type") != "Integrated GPU":
             return smbios_model
         
         if codename in ("Arrandale", "Clarksfield"):

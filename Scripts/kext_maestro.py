@@ -141,7 +141,10 @@ class KextMaestro:
             "Integrated GPU" in list(hardware_report.get("GPU").items())[-1][-1].get("Device Type"):
             selected_kexts.append("NootedRed")
         else:
-            selected_kexts.append("NootRX" if "Navi 22" in list(hardware_report.get("GPU").items())[0][-1].get("Codename") else "WhateverGreen")
+            gpu_data = hardware_report.get("GPU") or {}
+        gpu_list = list(gpu_data.items())
+        gpu_codename = gpu_list[0][1].get("Codename") if gpu_list else ""
+        selected_kexts.append("NootRX" if "Navi 22" in gpu_codename else "WhateverGreen")
 
         if "Laptop" in hardware_report.get("Motherboard").get("Platform") and ("ASUS" in hardware_report.get("Motherboard").get("Name") or "NootedRed" in selected_kexts):
             selected_kexts.append("ForgedInvariant")
